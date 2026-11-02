@@ -1,0 +1,67 @@
+name: MySQL transaction tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mysql-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          # Disposable CI database only. This is not a real account credential.
+          MYSQL_ROOT_PASSWORD: mysql-ci-test-only
+          MYSQL_ROOT_HOST: "%"
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --host=127.0.0.1 --user=root --password=mysql-ci-test-only"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+          --health-start-period=30s
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-test.txt
+
+      - name: Install test dependency
+        run: python -m pip install -r requirements-test.txt
+
+      - name: Check source files and parameter bindings
+        run: python scripts/check_repo.py
+
+      - name: Run transactions against MySQL
+        env:
+          MYSQL_TEST_PASSWORD: mysql-ci-test-only
+        run: >-
+          python database/run_tests.py
+          --host 127.0.0.1
+          --port 3306
+          --user root
+          --database 3Movies4Rent_A2_Test_CI
+          --output-dir execution_results
+
+      - name: Upload captured execution results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mysql-execution-results-${{ github.run_id }}
+          path: execution_results/
+          if-no-files-found: warn
+          retention-days: 14
