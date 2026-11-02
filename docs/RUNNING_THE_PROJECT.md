@@ -1,6 +1,6 @@
 # Running the project
 
-This repository currently contains the database layer and a test harness. It is not yet the final Java/JDBC web application. The revised SQL has **not yet been executed successfully against MySQL**; use the steps below to obtain real results.
+This repository currently contains the database layer and a test harness. It is not yet the final Java/JDBC web application. The database test step in [GitHub Actions run 41535204328](https://github.com/rishrm/3Movies4Rent/actions/runs/41535204328) executed the suite on **MySQL 8.4.13: 58/58 cases passed**, with the baseline restored after every case and all 13 expected rejections matched. This verifies the isolated tests; concurrent sessions and application authorization still need separate checks. Use the steps below to repeat the tests locally.
 
 ## What you need
 
@@ -70,7 +70,7 @@ Use the parameterized statements in `transactions.json` or `TRANSACTION_CATALOG.
 
 - Keep credentials, local team details, real customer data, and private submission material out of the public repository.
 - Keep any local `team.json` private. Add the required identifying details to the private course submission.
-- If a GitHub Actions workflow is present, inspect its latest completed run and any result artifact. A configured workflow alone is not proof that tests passed.
+- After later code changes, inspect the latest GitHub Actions run and its captured results. An earlier passing run establishes results only for the revision it tested.
 - A passing isolated test suite does not establish simultaneous-session behavior or application authorization. Those remain separate integration checks.
 
 [^pymysql]: [PyMySQL installation documentation](https://pymysql.readthedocs.io/en/latest/user/installation.html).

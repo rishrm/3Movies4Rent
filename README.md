@@ -6,20 +6,22 @@ for the team.
 
 ## Current status
 
-The schema and transaction code have been reviewed and statically checked.
-Successful MySQL execution is still pending. The test suite contains 58 cases,
-including 13 operations that should be rejected. Check the **Actions** tab for
-the result of the latest database test run; a prepared test is not a passed test.
+All **58 test cases passed on MySQL 8.4.13**, including 13 operations that must
+be rejected. Every test restored the initial database afterward.
+[Verified execution run](https://github.com/rishrm/3Movies4Rent/actions/runs/41535204328).
 
-The earlier reviewed submission contains screenshots, but this corrected SQL
-needs its own fresh execution results before it is used in a final submission.
+The run's `mysql-execution-results-41535204328` artifact contains the actual
+SQL outputs and JSON results. Check the **Actions** tab after later code changes.
+These are isolated transaction tests; they do not certify two-session concurrency
+or the later application's login and authorization behavior.
 
 ## Start here
 
 1. Clone this repo, or choose **Code → Download ZIP** on GitHub.
 2. Read [the setup guide](docs/RUNNING_THE_PROJECT.md).
 3. Run the SQL against a **new test database** on MySQL 8.0.16 or newer.
-4. Review the generated execution report and fix any failing cases.
+4. Review the generated execution report and fix any failing cases before using it
+   in the submission document.
 
 The Python runner is an optional testing helper. The project application still
 uses the required Java/JDBC stack in the later assignment.

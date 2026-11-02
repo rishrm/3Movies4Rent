@@ -1,6 +1,6 @@
 # Review notes
 
-The SQL package contains proposed corrections based on a review of the assignment requirements and the supplied implementation. Static review and document screenshots do **not** establish that the revised scripts execute successfully. MySQL execution is still pending; record the real server version, results, and failures when it is run.
+The SQL package contains corrections based on a review of the assignment requirements and the supplied implementation. The database test step in [GitHub Actions run 41535204328](https://github.com/rishrm/3Movies4Rent/actions/runs/41535204328) executed the revised scripts on **MySQL 8.4.13**. Its captured report records **58/58 cases passed**, all 58 baselines restored, and all 13 intended rejection cases matched. These are actual server results for isolated tests; they do not establish concurrent-session behavior, application authorization, or a particular grading outcome.
 
 ## What the database work covers
 
@@ -9,7 +9,7 @@ The SQL package contains proposed corrections based on a review of the assignmen
 - Customer account reads, available-movie searches, queues, rentals and returns, ratings, best sellers, and recommendations.
 - Additional actor and cast-link operations. These are supplemental; they do not replace required transactions.
 
-The catalog documents parameter types, bound sample values, SQL, and transaction-specific notes. The automated runner exercises 58 cases, including rejection cases. That count describes the test catalog, not a claim that the tests have passed.
+The catalog documents parameter types, bound sample values, SQL, and transaction-specific notes. The verified run covered 45 normal/read/edge cases and 13 expected rejections. Preserve the captured results and rerun the suite whenever the SQL or test fixtures change.
 
 ## Decisions to retain when making changes
 
@@ -26,8 +26,8 @@ Details are in [the database assumptions](../database/ASSUMPTIONS.txt).
 
 ## What still needs verification
 
-- Load the schema and procedures in the target MySQL version and resolve any execution errors.
-- Run the full catalog, inspect actual outputs, and retain the bound inputs with those outputs.
+- Repeat schema loading and the full catalog after code changes or when moving to another MySQL version.
+- Inspect each new run's actual outputs and retain the bound inputs with those outputs.
 - Check simultaneous rentals, returns, and inventory changes using separate connections.
 - Implement login and role enforcement in the application. Stored customer-ID checks alone do not authenticate a person.
 - Keep screenshots and exported tables readable, including all selected columns. A screenshot of a preceding version is not evidence for changed SQL.
