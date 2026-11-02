@@ -1,0 +1,6 @@
+{
+  "group": "Your group number",
+  "members": [
+    {"name": "Team member name", "email": "member@example.com"}
+  ]
+}

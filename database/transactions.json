@@ -1,0 +1,1867 @@
+[
+  {
+    "id": "CRUD01",
+    "title": "Add customer",
+    "role": "Customer representative",
+    "definition": "Create the personal record and customer record for a new customer.",
+    "parameters": [
+      {
+        "name": "PersonID",
+        "type": "INTEGER",
+        "description": "Unused identifier for the new PERSON row."
+      },
+      {
+        "name": "LastName",
+        "type": "CHAR(50)",
+        "description": "Last name."
+      },
+      {
+        "name": "FirstName",
+        "type": "CHAR(50)",
+        "description": "First name."
+      },
+      {
+        "name": "Address",
+        "type": "CHAR(50)",
+        "description": "Street address."
+      },
+      {
+        "name": "City",
+        "type": "CHAR(50)",
+        "description": "City."
+      },
+      {
+        "name": "State",
+        "type": "CHAR(2)",
+        "description": "Two-character state code."
+      },
+      {
+        "name": "ZipCode",
+        "type": "CHAR(10)",
+        "description": "Postal code, stored as text to preserve leading zeros."
+      },
+      {
+        "name": "Telephone",
+        "type": "CHAR(15)",
+        "description": "Telephone number."
+      },
+      {
+        "name": "CustomerID",
+        "type": "CHAR(11)",
+        "description": "Unused customer identifier."
+      },
+      {
+        "name": "EmailAddress",
+        "type": "CHAR(50)",
+        "description": "Customer email address."
+      },
+      {
+        "name": "CreditCardNumber",
+        "type": "CHAR(19)",
+        "description": "Demo credit-card value."
+      },
+      {
+        "name": "Rating",
+        "type": "INTEGER",
+        "description": "Customer activity rating from 1 to 5."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "INSERT INTO PERSON (PersonID, LastName, FirstName, Address, City, State, ZipCode, Telephone)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+        "values": [
+          7,
+          "Adams",
+          "John",
+          "123 ABC Street",
+          "Stony Brook",
+          "NY",
+          "11790",
+          "631-000-0000"
+        ]
+      },
+      {
+        "sql": "INSERT INTO CUSTOMER (PersonID, CustomerID, EmailAddress, CreditCardNumber, Rating)\nVALUES (?, ?, ?, ?, ?);",
+        "values": [
+          7,
+          "555-55-5555",
+          "JohnAdams@example.com",
+          "1111-2222-3333-4444",
+          3
+        ]
+      },
+      {
+        "sql": "SELECT P.PersonID, P.LastName, P.FirstName, P.Address, P.City, P.State, P.ZipCode, P.Telephone,\n       C.CustomerID, C.EmailAddress, C.Rating\nFROM PERSON P JOIN CUSTOMER C ON C.PersonID = P.PersonID\nWHERE C.CustomerID = ?\nORDER BY C.CustomerID;",
+        "values": [
+          "555-55-5555"
+        ]
+      }
+    ],
+    "notes": "Both inserts belong to one transaction. If either insert fails, roll back both. The same PersonID is bound to both inserts. This creates a customer profile; account enrollment is a separate operation. The SELECT verifies the resulting row before the test rollback."
+  },
+  {
+    "id": "CRUD02",
+    "title": "Edit customer contact information",
+    "role": "Customer representative",
+    "definition": "Update the telephone number and email address of the same existing customer.",
+    "parameters": [
+      {
+        "name": "CustomerID",
+        "type": "CHAR(11)",
+        "description": "Identifier of the one customer being edited."
+      },
+      {
+        "name": "Telephone",
+        "type": "CHAR(15)",
+        "description": "Replacement telephone number."
+      },
+      {
+        "name": "EmailAddress",
+        "type": "CHAR(50)",
+        "description": "Replacement email address."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "UPDATE PERSON P\nJOIN CUSTOMER C ON C.PersonID = P.PersonID\nSET P.Telephone = ?\nWHERE C.CustomerID = ?;",
+        "values": [
+          "631-000-0000",
+          "111-11-1111"
+        ]
+      },
+      {
+        "sql": "UPDATE CUSTOMER\nSET EmailAddress = ?\nWHERE CustomerID = ?;",
+        "values": [
+          "shang@example.com",
+          "111-11-1111"
+        ]
+      },
+      {
+        "sql": "SELECT P.PersonID, P.LastName, P.FirstName, P.Telephone, C.CustomerID, C.EmailAddress\nFROM PERSON P JOIN CUSTOMER C ON C.PersonID = P.PersonID\nWHERE C.CustomerID = ?\nORDER BY C.CustomerID;",
+        "values": [
+          "111-11-1111"
+        ]
+      }
+    ],
+    "notes": "The PERSON row is found through CUSTOMER, so independently supplied person and customer identifiers cannot update two different people. Both updates run in one transaction. Other editable contact columns can be included in the same pattern."
+  },
+  {
+    "id": "CRUD03",
+    "title": "Add employee",
+    "role": "Manager",
+    "definition": "Create a personal record and an employment record, including the employee role.",
+    "parameters": [
+      {
+        "name": "PersonID",
+        "type": "INTEGER",
+        "description": "Unused identifier for the new PERSON row."
+      },
+      {
+        "name": "LastName",
+        "type": "CHAR(50)",
+        "description": "Last name."
+      },
+      {
+        "name": "FirstName",
+        "type": "CHAR(50)",
+        "description": "First name."
+      },
+      {
+        "name": "Address",
+        "type": "CHAR(50)",
+        "description": "Street address."
+      },
+      {
+        "name": "City",
+        "type": "CHAR(50)",
+        "description": "City."
+      },
+      {
+        "name": "State",
+        "type": "CHAR(2)",
+        "description": "Two-character state code."
+      },
+      {
+        "name": "ZipCode",
+        "type": "CHAR(10)",
+        "description": "Postal code, stored as text to preserve leading zeros."
+      },
+      {
+        "name": "Telephone",
+        "type": "CHAR(15)",
+        "description": "Telephone number."
+      },
+      {
+        "name": "SocialSecurityNumber",
+        "type": "CHAR(11)",
+        "description": "Unused employee identifier."
+      },
+      {
+        "name": "StartDate",
+        "type": "DATE",
+        "description": "Employment start date."
+      },
+      {
+        "name": "HourlyRate",
+        "type": "INTEGER",
+        "description": "Nonnegative hourly rate in the team schema."
+      },
+      {
+        "name": "EmployeeType",
+        "type": "CHAR(25)",
+        "description": "Manager or CustomerRepresentative."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "INSERT INTO PERSON (PersonID, LastName, FirstName, Address, City, State, ZipCode, Telephone)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+        "values": [
+          7,
+          "Adams",
+          "Rachel",
+          "123 ABC Street",
+          "Stony Brook",
+          "NY",
+          "11790",
+          "631-000-0000"
+        ]
+      },
+      {
+        "sql": "INSERT INTO EMPLOYEE (SocialSecurityNumber, PersonID, StartDate, HourlyRate, EmployeeType)\nVALUES (?, ?, ?, ?, ?);",
+        "values": [
+          "555-55-5555",
+          7,
+          "2026-11-01",
+          25,
+          "Manager"
+        ]
+      },
+      {
+        "sql": "SELECT E.SocialSecurityNumber, P.PersonID, P.FirstName, P.LastName, P.Address, P.City,\n       P.State, P.ZipCode, P.Telephone, E.StartDate, E.HourlyRate, E.EmployeeType\nFROM EMPLOYEE E JOIN PERSON P ON P.PersonID = E.PersonID\nWHERE E.SocialSecurityNumber = ?\nORDER BY E.SocialSecurityNumber;",
+        "values": [
+          "555-55-5555"
+        ]
+      }
+    ],
+    "notes": "The two inserts are atomic and bind the same PersonID. The test uses an unused identifier and is rolled back before other tests reuse PersonID 7. Only a manager may execute this transaction."
+  },
+  {
+    "id": "CRUD04",
+    "title": "Edit employee hourly rate",
+    "role": "Manager",
+    "definition": "Change the hourly rate of an existing employee.",
+    "parameters": [
+      {
+        "name": "SocialSecurityNumber",
+        "type": "CHAR(11)",
+        "description": "Employee identifier."
+      },
+      {
+        "name": "HourlyRate",
+        "type": "INTEGER",
+        "description": "Replacement nonnegative hourly rate."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "UPDATE EMPLOYEE\nSET HourlyRate = ?\nWHERE SocialSecurityNumber = ?;",
+        "values": [
+          55,
+          "789-12-3456"
+        ]
+      },
+      {
+        "sql": "SELECT E.SocialSecurityNumber, P.FirstName, P.LastName, E.StartDate, E.HourlyRate, E.EmployeeType\nFROM EMPLOYEE E JOIN PERSON P ON P.PersonID = E.PersonID\nWHERE E.SocialSecurityNumber = ?\nORDER BY E.SocialSecurityNumber;",
+        "values": [
+          "789-12-3456"
+        ]
+      }
+    ],
+    "notes": "This demonstrates an employee-information edit. Personal-field updates should identify PERSON through the EMPLOYEE join, using the same employee identifier. Changing a representative into a manager requires a separate policy for existing HANDLEDBY history. Hourly rates are manager-only information."
+  },
+  {
+    "id": "CRUD05",
+    "title": "Add movie",
+    "role": "Manager",
+    "definition": "Add a new movie to the catalog with its total number of copies.",
+    "parameters": [
+      {
+        "name": "MovieID",
+        "type": "INTEGER",
+        "description": "Unused movie identifier."
+      },
+      {
+        "name": "MovieName",
+        "type": "CHAR(100)",
+        "description": "Movie title."
+      },
+      {
+        "name": "MovieType",
+        "type": "CHAR(10)",
+        "description": "Comedy, Drama, Action, or Foreign."
+      },
+      {
+        "name": "DistributionFee",
+        "type": "DECIMAL(10,2)",
+        "description": "Nonnegative distribution fee."
+      },
+      {
+        "name": "NumberOfCopies",
+        "type": "INTEGER",
+        "description": "Nonnegative total inventory, not the count currently available."
+      },
+      {
+        "name": "Rating",
+        "type": "INTEGER",
+        "description": "Movie popularity rating from 1 to 5."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "INSERT INTO MOVIE (MovieID, MovieName, MovieType, DistributionFee, NumberOfCopies, Rating)\nVALUES (?, ?, ?, ?, ?, ?);",
+        "values": [
+          4,
+          "Inception",
+          "Action",
+          2000,
+          5,
+          5
+        ]
+      },
+      {
+        "sql": "SELECT MovieID, MovieName, MovieType, DistributionFee, NumberOfCopies, Rating\nFROM MOVIE\nWHERE MovieID = ?\nORDER BY MovieID;",
+        "values": [
+          4
+        ]
+      }
+    ],
+    "notes": "Availability is calculated from total copies minus unreturned rentals. Adding a movie does not create actor associations; those are inserted separately."
+  },
+  {
+    "id": "CRUD06",
+    "title": "Delete movie",
+    "role": "Manager",
+    "definition": "Delete a catalog movie that has no rental history.",
+    "parameters": [
+      {
+        "name": "MovieID",
+        "type": "INTEGER",
+        "description": "Identifier of the movie to delete."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "DELETE FROM MOVIE\nWHERE MovieID = ?;",
+        "values": [
+          4
+        ]
+      },
+      {
+        "sql": "SELECT MovieID, MovieName, MovieType, DistributionFee, NumberOfCopies, Rating\nFROM MOVIE\nWHERE MovieID = ?\nORDER BY MovieID;",
+        "values": [
+          4
+        ]
+      }
+    ],
+    "notes": "ORDER_MOVIE has a restrictive foreign key to MOVIE, so a movie with rental history cannot be deleted. Do not delete rental history to bypass that restriction. Existing FEATURES, QUEUES, and RATES references follow their declared cascade rules. The test first inserts an unused temporary movie; setup and deletion are rolled back together.",
+    "setup": [
+      {
+        "sql": "INSERT INTO MOVIE (MovieID, MovieName, MovieType, DistributionFee, NumberOfCopies, Rating)\nVALUES (?, ?, ?, ?, ?, ?);",
+        "values": [
+          4,
+          "Inception",
+          "Action",
+          2000,
+          5,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CRUD07",
+    "title": "Add actor",
+    "role": "Manager",
+    "definition": "Add an actor to the catalog. This is an additional operation retained from the team draft.",
+    "parameters": [
+      {
+        "name": "ActorID",
+        "type": "INTEGER",
+        "description": "Unused actor identifier."
+      },
+      {
+        "name": "ActorName",
+        "type": "CHAR(50)",
+        "description": "Actor name."
+      },
+      {
+        "name": "Gender",
+        "type": "CHAR(1)",
+        "description": "M or F, matching the given schema and demo data."
+      },
+      {
+        "name": "Age",
+        "type": "INTEGER",
+        "description": "Nonnegative age."
+      },
+      {
+        "name": "Rating",
+        "type": "INTEGER",
+        "description": "Actor popularity rating from 1 to 5."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "INSERT INTO ACTOR (ActorID, ActorName, Gender, Age, Rating)\nVALUES (?, ?, ?, ?, ?);",
+        "values": [
+          3,
+          "New Actor",
+          "M",
+          40,
+          3
+        ]
+      },
+      {
+        "sql": "SELECT ActorID, ActorName, Gender, Age, Rating\nFROM ACTOR\nWHERE ActorID = ?\nORDER BY ActorID;",
+        "values": [
+          3
+        ]
+      }
+    ],
+    "notes": "This is supplementary catalog maintenance. An actor is associated with a movie using FEATURES."
+  },
+  {
+    "id": "CRUD08",
+    "title": "Edit actor",
+    "role": "Manager",
+    "definition": "Update an actor age and popularity rating.",
+    "parameters": [
+      {
+        "name": "ActorID",
+        "type": "INTEGER",
+        "description": "Existing actor identifier."
+      },
+      {
+        "name": "Age",
+        "type": "INTEGER",
+        "description": "Replacement nonnegative age."
+      },
+      {
+        "name": "Rating",
+        "type": "INTEGER",
+        "description": "Replacement rating from 1 to 5."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "UPDATE ACTOR\nSET Age = ?, Rating = ?\nWHERE ActorID = ?;",
+        "values": [
+          64,
+          4,
+          1
+        ]
+      },
+      {
+        "sql": "SELECT ActorID, ActorName, Gender, Age, Rating\nFROM ACTOR\nWHERE ActorID = ?\nORDER BY ActorID;",
+        "values": [
+          1
+        ]
+      }
+    ],
+    "notes": "Supplementary catalog maintenance. The actor identifier stays unchanged."
+  },
+  {
+    "id": "CRUD09",
+    "title": "Delete actor",
+    "role": "Manager",
+    "definition": "Delete an actor from the catalog.",
+    "parameters": [
+      {
+        "name": "ActorID",
+        "type": "INTEGER",
+        "description": "Identifier of the actor to delete."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "DELETE FROM ACTOR\nWHERE ActorID = ?;",
+        "values": [
+          3
+        ]
+      },
+      {
+        "sql": "SELECT ActorID, ActorName, Gender, Age, Rating\nFROM ACTOR\nWHERE ActorID = ?\nORDER BY ActorID;",
+        "values": [
+          3
+        ]
+      }
+    ],
+    "notes": "FEATURES associations cascade when an actor is deleted. Movie rows and rental rows are not deleted. The test creates an unused temporary actor, then deletes that actor inside the same rollback-isolated test.",
+    "setup": [
+      {
+        "sql": "INSERT INTO ACTOR (ActorID, ActorName, Gender, Age, Rating)\nVALUES (?, ?, ?, ?, ?);",
+        "values": [
+          3,
+          "New Actor",
+          "M",
+          40,
+          3
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CRUD10",
+    "title": "Add actor to movie",
+    "role": "Manager",
+    "definition": "Associate an existing actor with an existing movie.",
+    "parameters": [
+      {
+        "name": "MovieID",
+        "type": "INTEGER",
+        "description": "Existing movie identifier."
+      },
+      {
+        "name": "ActorID",
+        "type": "INTEGER",
+        "description": "Existing actor identifier."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "INSERT INTO FEATURES (MovieID, ActorID)\nVALUES (?, ?);",
+        "values": [
+          2,
+          2
+        ]
+      },
+      {
+        "sql": "SELECT F.MovieID, M.MovieName, F.ActorID, A.ActorName\nFROM FEATURES F\nJOIN MOVIE M ON M.MovieID = F.MovieID\nJOIN ACTOR A ON A.ActorID = F.ActorID\nWHERE F.MovieID = ?\nORDER BY F.MovieID, F.ActorID;",
+        "values": [
+          2
+        ]
+      }
+    ],
+    "notes": "The composite primary key prevents duplicate associations. Both foreign keys must reference existing rows. This is a deliberate test change, not a correction to the official demo data."
+  },
+  {
+    "id": "CRUD11",
+    "title": "Remove actor from movie",
+    "role": "Manager",
+    "definition": "Remove one cast association without deleting the movie or actor.",
+    "parameters": [
+      {
+        "name": "MovieID",
+        "type": "INTEGER",
+        "description": "Movie identifier."
+      },
+      {
+        "name": "ActorID",
+        "type": "INTEGER",
+        "description": "Actor identifier in the association to remove."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "DELETE FROM FEATURES\nWHERE MovieID = ? AND ActorID = ?;",
+        "values": [
+          1,
+          2
+        ]
+      },
+      {
+        "sql": "SELECT F.MovieID, M.MovieName, F.ActorID, A.ActorName\nFROM FEATURES F\nJOIN MOVIE M ON M.MovieID = F.MovieID\nJOIN ACTOR A ON A.ActorID = F.ActorID\nWHERE F.MovieID = ?\nORDER BY F.MovieID, F.ActorID;",
+        "values": [
+          1
+        ]
+      }
+    ],
+    "notes": "Only the specified FEATURES row is deleted. The actor, movie, and rental history remain. The test rollback restores the demo association."
+  },
+  {
+    "id": "R01",
+    "title": "Monthly subscription income estimate",
+    "role": "Manager",
+    "definition": "Estimate subscription income for a selected calendar month using the current account records and the assignment's fixed monthly plan fees.",
+    "parameters": [
+      {
+        "name": "MonthStart",
+        "type": "DATE",
+        "description": "First day of the requested month; the application must validate this requirement."
+      }
+    ],
+    "sql": "WITH report_parameters AS (\n    SELECT CAST(? AS DATE) AS MonthStart\n)\nSELECT rp.MonthStart AS ReportMonth,\n       COUNT(a.AccountNumber) AS AssumedActiveSubscriptions,\n       CAST(COALESCE(SUM(\n           CASE a.AccountType\n               WHEN 'Lim' THEN 10.00\n               WHEN 'Unlim1' THEN 15.00\n               WHEN 'Unlim2' THEN 20.00\n               WHEN 'Unlim3' THEN 25.00\n               ELSE 0.00\n           END\n       ), 0.00) AS DECIMAL(12,2)) AS EstimatedMonthlyIncome\nFROM report_parameters rp\nLEFT JOIN ACCOUNT a\n    ON a.AccountCreationDate < DATE_ADD(rp.MonthStart, INTERVAL 1 MONTH)\nGROUP BY rp.MonthStart;",
+    "values": [
+      "2009-11-01"
+    ],
+    "notes": "Estimate only: assumes every retained account remains active from its creation onward, its current plan applied in the report month, and the full monthly fee is charged for any month in which the account exists, without proration. ACCOUNT contains no cancellation/status history, plan-change history, invoices, or payments; exact historical active-subscription income cannot be reconstructed. DistributionFee is an expense and is not rental/subscription income. All four prices come from the project requirements."
+  },
+  {
+    "id": "R02",
+    "title": "Comprehensive movie listing",
+    "role": "Manager",
+    "definition": "List every catalog movie, including unavailable movies and movies without cast entries, together with current circulation counts and its actors.",
+    "parameters": [],
+    "sql": "SELECT v.MovieID, v.MovieName, v.MovieType, v.DistributionFee,\n       v.NumberOfCopies, v.Rating, v.CopiesOut, v.AvailableCopies,\n       GROUP_CONCAT(a.ActorName ORDER BY a.ActorName, a.ActorID SEPARATOR ', ') AS Actors\nFROM V_MOVIE_AVAILABILITY v\nLEFT JOIN FEATURES f ON f.MovieID = v.MovieID\nLEFT JOIN ACTOR a ON a.ActorID = f.ActorID\nGROUP BY v.MovieID, v.MovieName, v.MovieType, v.DistributionFee,\n         v.NumberOfCopies, v.Rating, v.CopiesOut, v.AvailableCopies\nORDER BY v.MovieID;",
+    "values": [],
+    "notes": "V_MOVIE_AVAILABILITY must contain one row per movie and count only orders with ReturnDateTime IS NULL as CopiesOut; AvailableCopies is NumberOfCopies minus CopiesOut. LEFT JOIN retains movies with no FEATURES rows; Actors is NULL for such movies. This manager catalog report deliberately includes movies with zero available copies. GROUP_CONCAT is suitable for the demo cast sizes; increase its session limit for a larger production catalog if necessary."
+  },
+  {
+    "id": "R03",
+    "title": "Rental history by movie name",
+    "role": "Manager",
+    "definition": "List current and returned rentals for every movie matching the supplied title.",
+    "parameters": [
+      {
+        "name": "MovieName",
+        "type": "CHAR(100)",
+        "description": "Exact movie title, compared using the database collation."
+      }
+    ],
+    "sql": "SELECT o.OrderID, m.MovieID, m.MovieName, m.MovieType,\n       ac.AccountNumber, ac.CustomerID,\n       o.OrderDateTime, o.ReturnDateTime\nFROM MOVIE m\nJOIN ORDER_MOVIE om ON om.MovieID = m.MovieID\nJOIN ORDERR o ON o.OrderID = om.OrderID\nJOIN PLACES pl ON pl.OrderID = o.OrderID\nJOIN ACCOUNT ac ON ac.AccountNumber = pl.AccountNumber\nWHERE m.MovieName = ?\nORDER BY o.OrderDateTime, o.OrderID;",
+    "values": [
+      "Borat"
+    ],
+    "notes": "MovieName is not declared unique; MovieID is included so separate titles with identical names remain distinguishable. The manager sees all matching customers' rentals, including currently outstanding rentals."
+  },
+  {
+    "id": "R04",
+    "title": "Rental history by movie type",
+    "role": "Manager",
+    "definition": "List current and returned rentals for movies of a selected type.",
+    "parameters": [
+      {
+        "name": "MovieType",
+        "type": "CHAR(10)",
+        "description": "One of Comedy, Drama, Action, or Foreign."
+      }
+    ],
+    "sql": "SELECT o.OrderID, m.MovieID, m.MovieName, m.MovieType,\n       ac.AccountNumber, ac.CustomerID,\n       o.OrderDateTime, o.ReturnDateTime\nFROM MOVIE m\nJOIN ORDER_MOVIE om ON om.MovieID = m.MovieID\nJOIN ORDERR o ON o.OrderID = om.OrderID\nJOIN PLACES pl ON pl.OrderID = o.OrderID\nJOIN ACCOUNT ac ON ac.AccountNumber = pl.AccountNumber\nWHERE m.MovieType = ?\nORDER BY o.OrderDateTime, o.OrderID;",
+    "values": [
+      "Drama"
+    ],
+    "notes": "This rental-history report does not filter availability: both returned and currently held orders are relevant."
+  },
+  {
+    "id": "R05",
+    "title": "Rental history by customer name",
+    "role": "Manager",
+    "definition": "List current and returned rentals across all accounts of customers matching the supplied first and last names.",
+    "parameters": [
+      {
+        "name": "FirstName",
+        "type": "CHAR(50)",
+        "description": "Customer's first name."
+      },
+      {
+        "name": "LastName",
+        "type": "CHAR(50)",
+        "description": "Customer's last name."
+      }
+    ],
+    "sql": "SELECT c.CustomerID, p.FirstName, p.LastName,\n       ac.AccountNumber, o.OrderID, m.MovieID, m.MovieName,\n       o.OrderDateTime, o.ReturnDateTime\nFROM PERSON p\nJOIN CUSTOMER c ON c.PersonID = p.PersonID\nJOIN ACCOUNT ac ON ac.CustomerID = c.CustomerID\nJOIN PLACES pl ON pl.AccountNumber = ac.AccountNumber\nJOIN ORDERR o ON o.OrderID = pl.OrderID\nJOIN ORDER_MOVIE om ON om.OrderID = o.OrderID\nJOIN MOVIE m ON m.MovieID = om.MovieID\nWHERE p.FirstName = ? AND p.LastName = ?\nORDER BY c.CustomerID, o.OrderDateTime, o.OrderID;",
+    "values": [
+      "Lewis",
+      "Philip"
+    ],
+    "notes": "Names are not unique. This report returns every matching customer and includes CustomerID to distinguish them. Counts and history span all of each customer's accounts."
+  },
+  {
+    "id": "R06",
+    "title": "Customer representatives who handled the most rentals",
+    "role": "Manager",
+    "definition": "Find all customer representatives tied for the largest positive number of handled rental orders.",
+    "parameters": [],
+    "sql": "WITH representative_counts AS (\n    SELECT e.SocialSecurityNumber, p.FirstName, p.LastName,\n           COUNT(om.OrderID) AS OrdersHandled\n    FROM EMPLOYEE e\n    JOIN PERSON p ON p.PersonID = e.PersonID\n    LEFT JOIN HANDLEDBY h ON h.SocialSecurityNumber = e.SocialSecurityNumber\n    LEFT JOIN ORDERR o ON o.OrderID = h.OrderID\n    LEFT JOIN ORDER_MOVIE om ON om.OrderID = o.OrderID\n    WHERE e.EmployeeType = 'CustomerRepresentative'\n    GROUP BY e.SocialSecurityNumber, p.FirstName, p.LastName\n)\nSELECT SocialSecurityNumber, FirstName, LastName, OrdersHandled\nFROM representative_counts\nWHERE OrdersHandled > 0\n  AND OrdersHandled = (SELECT MAX(OrdersHandled) FROM representative_counts)\nORDER BY SocialSecurityNumber;",
+    "values": [],
+    "notes": "Returns every first-place tie, without LIMIT 1. If no customer representative has handled any rental, the result is empty. Counted orders must have an ORDER_MOVIE record. The source demo omits all HANDLEDBY records; any demo fixture assigning the four orders to the sole representative must be documented as an added assumption, not original data."
+  },
+  {
+    "id": "R07",
+    "title": "Most active customers, including all first-place ties",
+    "role": "Manager",
+    "definition": "Find all customers tied for the largest positive number of rental orders across their accounts.",
+    "parameters": [],
+    "sql": "WITH rental_counts AS (\n    SELECT ac.CustomerID, COUNT(om.OrderID) AS TotalRentals\n    FROM ACCOUNT ac\n    JOIN PLACES pl ON pl.AccountNumber = ac.AccountNumber\n    JOIN ORDERR o ON o.OrderID = pl.OrderID\n    JOIN ORDER_MOVIE om ON om.OrderID = o.OrderID\n    GROUP BY ac.CustomerID\n)\nSELECT c.CustomerID, p.FirstName, p.LastName, rc.TotalRentals\nFROM rental_counts rc\nJOIN CUSTOMER c ON c.CustomerID = rc.CustomerID\nJOIN PERSON p ON p.PersonID = c.PersonID\nWHERE rc.TotalRentals > 0\n  AND rc.TotalRentals = (SELECT MAX(TotalRentals) FROM rental_counts)\nORDER BY c.CustomerID;",
+    "values": [],
+    "notes": "All first-place ties are retained. Each rental order counts once, including repeat rentals of a title and currently held movies. This measures activity from orders rather than the seed CUSTOMER.Rating. Customers with no rentals are not most active; an entirely unrented database returns no rows."
+  },
+  {
+    "id": "R08",
+    "title": "Most actively rented movies / customer best-seller list",
+    "role": "Manager; Customer",
+    "definition": "Rank all catalog movies by all-time rental count, with equal counts receiving the same rank.",
+    "parameters": [],
+    "sql": "WITH movie_counts AS (\n    SELECT m.MovieID, m.MovieName, m.MovieType,\n           COUNT(o.OrderID) AS RentalCount\n    FROM MOVIE m\n    LEFT JOIN ORDER_MOVIE om ON om.MovieID = m.MovieID\n    LEFT JOIN ORDERR o ON o.OrderID = om.OrderID\n    GROUP BY m.MovieID, m.MovieName, m.MovieType\n)\nSELECT MovieID, MovieName, MovieType, RentalCount,\n       DENSE_RANK() OVER (ORDER BY RentalCount DESC) AS PopularityRank\nFROM movie_counts\nORDER BY RentalCount DESC, MovieID;",
+    "values": [],
+    "notes": "The same query serves the manager's most-actively-rented-movies report and the customer's best-seller list. Counts include current and past rentals and retain never-rented movies with zero. DENSE_RANK preserves tied popularity while MovieID makes output order deterministic. The best-seller list is not an availability search and may include unavailable movies."
+  },
+  {
+    "id": "R09",
+    "title": "Customer mailing list",
+    "role": "CustomerRepresentative",
+    "definition": "List customers' names, mailing addresses, and email addresses, including customers without an account.",
+    "parameters": [],
+    "sql": "SELECT c.CustomerID, p.FirstName, p.LastName,\n       p.Address, p.City, p.State, p.ZipCode, c.EmailAddress\nFROM CUSTOMER c\nJOIN PERSON p ON p.PersonID = c.PersonID\nORDER BY p.LastName, p.FirstName, c.CustomerID;",
+    "values": [],
+    "notes": "This is a staff-only customer report. No credit card data is selected, and no ACCOUNT join excludes customers who have not yet opened an account."
+  },
+  {
+    "id": "R10",
+    "title": "Nearest-neighbor movie suggestions",
+    "role": "CustomerRepresentative; Customer (self only)",
+    "definition": "Recommend unrented movies from customers with the greatest positive overlap in previously rented distinct movie titles.",
+    "parameters": [
+      {
+        "name": "TargetCustomerID",
+        "type": "CHAR(11)",
+        "description": "For customer self-service, bind the authenticated session's CustomerID. A role-authorized representative may select the customer to assist."
+      }
+    ],
+    "sql": "WITH target_customer AS (\n    SELECT CustomerID\n    FROM CUSTOMER\n    WHERE CustomerID = ?\n),\nrental_history AS (\n    SELECT DISTINCT ac.CustomerID, om.MovieID\n    FROM ACCOUNT ac\n    JOIN PLACES pl ON pl.AccountNumber = ac.AccountNumber\n    JOIN ORDERR o ON o.OrderID = pl.OrderID\n    JOIN ORDER_MOVIE om ON om.OrderID = o.OrderID\n),\noverlap_scores AS (\n    SELECT other.CustomerID, COUNT(*) AS SharedTitles\n    FROM target_customer target\n    JOIN rental_history own ON own.CustomerID = target.CustomerID\n    JOIN rental_history other\n      ON other.MovieID = own.MovieID\n     AND other.CustomerID <> target.CustomerID\n    GROUP BY other.CustomerID\n),\nnearest_neighbors AS (\n    SELECT CustomerID, SharedTitles\n    FROM overlap_scores\n    WHERE SharedTitles = (SELECT MAX(SharedTitles) FROM overlap_scores)\n)\nSELECT m.MovieID, m.MovieName, m.MovieType,\n       COUNT(DISTINCT neighbor.CustomerID) AS RecommendingNeighbors,\n       MAX(neighbor.SharedTitles) AS NearestNeighborSharedTitles\nFROM nearest_neighbors neighbor\nJOIN rental_history candidate ON candidate.CustomerID = neighbor.CustomerID\nJOIN MOVIE m ON m.MovieID = candidate.MovieID\nWHERE NOT EXISTS (\n    SELECT 1\n    FROM rental_history prior_rental\n    JOIN target_customer target ON target.CustomerID = prior_rental.CustomerID\n    WHERE prior_rental.MovieID = m.MovieID\n)\nGROUP BY m.MovieID, m.MovieName, m.MovieType\nORDER BY RecommendingNeighbors DESC, m.MovieID;",
+    "values": [
+      "444-44-4444"
+    ],
+    "notes": "One query is reused for representative-assisted and customer self-service suggestions. Customer calls must bind TargetCustomerID from the trusted session; the server must authorize representatives before permitting a different target. Similarity is the number of shared distinct rented titles, not Jaccard similarity or ratings. All customers tied for the largest positive overlap are nearest neighbors. Histories combine all accounts of each customer, exclude the target customer from neighbors, and exclude all of the target's previously rented titles. Repeat rentals do not inflate similarity. No history, no overlapping neighbor, or no unseen neighbor titles yields an empty result. RATES is not required. Suggestions may be queued even when unavailable; checkout separately enforces availability."
+  },
+  {
+    "id": "R11",
+    "title": "Customer's currently held movies",
+    "role": "Customer",
+    "definition": "List unreturned rentals for an account owned by the authenticated customer.",
+    "parameters": [
+      {
+        "name": "AccountNumber",
+        "type": "INTEGER",
+        "description": "Requested account number."
+      },
+      {
+        "name": "AuthenticatedCustomerID",
+        "type": "CHAR(11)",
+        "description": "Customer ID obtained from the trusted authenticated session, never from editable form data."
+      }
+    ],
+    "sql": "SELECT m.MovieID, m.MovieName, m.MovieType,\n       o.OrderID, o.OrderDateTime\nFROM ACCOUNT ac\nJOIN PLACES pl ON pl.AccountNumber = ac.AccountNumber\nJOIN ORDERR o ON o.OrderID = pl.OrderID\nJOIN ORDER_MOVIE om ON om.OrderID = o.OrderID\nJOIN MOVIE m ON m.MovieID = om.MovieID\nWHERE ac.AccountNumber = ?\n  AND ac.CustomerID = ?\n  AND o.ReturnDateTime IS NULL\nORDER BY o.OrderDateTime, o.OrderID;",
+    "values": [
+      1,
+      "444-44-4444"
+    ],
+    "notes": "The server must obtain AuthenticatedCustomerID from the authenticated session and authorize the customer role before executing this statement. A mismatched account/customer pair returns no rows. The current schema does not itself model login identities or database role privileges."
+  },
+  {
+    "id": "R12",
+    "title": "Customer's movie queue",
+    "role": "Customer",
+    "definition": "List the authenticated customer's selected account queue in its requested viewing order.",
+    "parameters": [
+      {
+        "name": "AccountNumber",
+        "type": "INTEGER",
+        "description": "Requested account number."
+      },
+      {
+        "name": "AuthenticatedCustomerID",
+        "type": "CHAR(11)",
+        "description": "Customer ID obtained from the trusted authenticated session, never from editable form data."
+      }
+    ],
+    "sql": "SELECT q.QueuePosition, m.MovieID, m.MovieName, m.MovieType\nFROM ACCOUNT ac\nJOIN QUEUES q ON q.AccountNumber = ac.AccountNumber\nJOIN MOVIE m ON m.MovieID = q.MovieID\nWHERE ac.AccountNumber = ?\n  AND ac.CustomerID = ?\nORDER BY q.QueuePosition;",
+    "values": [
+      1,
+      "444-44-4444"
+    ],
+    "notes": "The server must obtain AuthenticatedCustomerID from the authenticated session and authorize the customer role before executing this statement. A mismatched account/customer pair returns no rows. The current schema does not itself model login identities or database role privileges. The queue includes unavailable movies; it records viewing preferences rather than a promise of immediate checkout."
+  },
+  {
+    "id": "R13",
+    "title": "Customer's account settings",
+    "role": "Customer",
+    "definition": "Display the authenticated customer's selected account, subscription fee, contact details, and masked payment-card number.",
+    "parameters": [
+      {
+        "name": "AccountNumber",
+        "type": "INTEGER",
+        "description": "Requested account number."
+      },
+      {
+        "name": "AuthenticatedCustomerID",
+        "type": "CHAR(11)",
+        "description": "Customer ID obtained from the trusted authenticated session, never from editable form data."
+      }
+    ],
+    "sql": "SELECT ac.AccountNumber, ac.CustomerID, ac.AccountType, ac.AccountCreationDate,\n       CASE ac.AccountType\n           WHEN 'Lim' THEN 10.00\n           WHEN 'Unlim1' THEN 15.00\n           WHEN 'Unlim2' THEN 20.00\n           WHEN 'Unlim3' THEN 25.00\n       END AS MonthlyFee,\n       p.FirstName, p.LastName, p.Address, p.City, p.State,\n       p.ZipCode, p.Telephone, c.EmailAddress,\n       CONCAT('****-****-****-', RIGHT(c.CreditCardNumber, 4)) AS MaskedCreditCardNumber\nFROM ACCOUNT ac\nJOIN CUSTOMER c ON c.CustomerID = ac.CustomerID\nJOIN PERSON p ON p.PersonID = c.PersonID\nWHERE ac.AccountNumber = ?\n  AND ac.CustomerID = ?;",
+    "values": [
+      1,
+      "444-44-4444"
+    ],
+    "notes": "The server must obtain AuthenticatedCustomerID from the authenticated session and authorize the customer role before executing this statement. A mismatched account/customer pair returns no rows. The current schema does not itself model login identities or database role privileges. Only the last four card digits are displayed. The demo schema retains a full card-number field; this query does not expose that full value."
+  },
+  {
+    "id": "R14",
+    "title": "Customer's current and past order history",
+    "role": "Customer",
+    "definition": "List all rental orders for an account owned by the authenticated customer, explicitly marking currently held and returned movies.",
+    "parameters": [
+      {
+        "name": "AccountNumber",
+        "type": "INTEGER",
+        "description": "Requested account number."
+      },
+      {
+        "name": "AuthenticatedCustomerID",
+        "type": "CHAR(11)",
+        "description": "Customer ID obtained from the trusted authenticated session, never from editable form data."
+      }
+    ],
+    "sql": "SELECT o.OrderID, o.OrderDateTime, o.ReturnDateTime,\n       m.MovieID, m.MovieName, m.MovieType,\n       CASE WHEN o.ReturnDateTime IS NULL THEN 'Currently held' ELSE 'Returned' END AS RentalStatus\nFROM ACCOUNT ac\nJOIN PLACES pl ON pl.AccountNumber = ac.AccountNumber\nJOIN ORDERR o ON o.OrderID = pl.OrderID\nJOIN ORDER_MOVIE om ON om.OrderID = o.OrderID\nJOIN MOVIE m ON m.MovieID = om.MovieID\nWHERE ac.AccountNumber = ?\n  AND ac.CustomerID = ?\nORDER BY o.OrderDateTime, o.OrderID;",
+    "values": [
+      1,
+      "444-44-4444"
+    ],
+    "notes": "The server must obtain AuthenticatedCustomerID from the authenticated session and authorize the customer role before executing this statement. A mismatched account/customer pair returns no rows. The current schema does not itself model login identities or database role privileges."
+  },
+  {
+    "id": "R15",
+    "title": "Available movies by type",
+    "role": "Customer",
+    "definition": "Find movies of a selected type with at least one copy currently available.",
+    "parameters": [
+      {
+        "name": "MovieType",
+        "type": "CHAR(10)",
+        "description": "One of Comedy, Drama, Action, or Foreign."
+      }
+    ],
+    "sql": "SELECT MovieID, MovieName, MovieType, Rating, AvailableCopies\nFROM V_MOVIE_AVAILABILITY\nWHERE MovieType = ?\n  AND AvailableCopies > 0\nORDER BY MovieName, MovieID;",
+    "values": [
+      "Drama"
+    ],
+    "notes": "Availability is derived from outstanding rentals, not merely NumberOfCopies > 0. Availability can change after this read; the order transaction must recheck inventory under its checkout locking protocol."
+  },
+  {
+    "id": "R16",
+    "title": "Available movies by one literal title keyword",
+    "role": "Customer",
+    "definition": "Find available movies whose title contains the supplied literal keyword.",
+    "parameters": [
+      {
+        "name": "Keyword",
+        "type": "VARCHAR(100)",
+        "description": "Nonempty literal title substring; the application trims and rejects blank input."
+      }
+    ],
+    "sql": "SELECT MovieID, MovieName, MovieType, Rating, AvailableCopies\nFROM V_MOVIE_AVAILABILITY\nWHERE AvailableCopies > 0\n  AND LOCATE(?, MovieName) > 0\nORDER BY MovieName, MovieID;",
+    "values": [
+      "Godfather"
+    ],
+    "notes": "LOCATE treats percent and underscore characters literally; it does not interpret SQL LIKE wildcard syntax. Case/accent matching follows the configured string collation. A query parameter is bound as data."
+  },
+  {
+    "id": "R17",
+    "title": "Available movies containing all requested title keywords",
+    "role": "Customer",
+    "definition": "Find available movies whose title contains both supplied literal keywords, in any order.",
+    "parameters": [
+      {
+        "name": "Keyword1",
+        "type": "VARCHAR(100)",
+        "description": "First nonempty literal title substring."
+      },
+      {
+        "name": "Keyword2",
+        "type": "VARCHAR(100)",
+        "description": "Second nonempty literal title substring."
+      }
+    ],
+    "sql": "SELECT MovieID, MovieName, MovieType, Rating, AvailableCopies\nFROM V_MOVIE_AVAILABILITY\nWHERE AvailableCopies > 0\n  AND LOCATE(?, MovieName) > 0\n  AND LOCATE(?, MovieName) > 0\nORDER BY MovieName, MovieID;",
+    "values": [
+      "The",
+      "Godfather"
+    ],
+    "notes": "The keyword-set semantics are ALL, not ANY. This fixed two-keyword query satisfies the demonstrated set search; additional keywords use additional bound LOCATE predicates. Trim input and reject blank or NULL keywords. Repeating a keyword does not require it to appear twice."
+  },
+  {
+    "id": "R18",
+    "title": "Available movies starring a selected actor",
+    "role": "Customer",
+    "definition": "Find available movies featuring the selected actor ID.",
+    "parameters": [
+      {
+        "name": "ActorID",
+        "type": "INTEGER",
+        "description": "ID of the actor selected by name in the interface; actor names are not declared unique."
+      }
+    ],
+    "sql": "SELECT v.MovieID, v.MovieName, v.MovieType, v.Rating, v.AvailableCopies\nFROM V_MOVIE_AVAILABILITY v\nWHERE v.AvailableCopies > 0\n  AND EXISTS (\n      SELECT 1\n      FROM FEATURES f\n      WHERE f.MovieID = v.MovieID AND f.ActorID = ?\n  )\nORDER BY v.MovieName, v.MovieID;",
+    "values": [
+      1
+    ],
+    "notes": "Use the ACTOR primary key for an unambiguous actor selection. FEATURES is keyed by (MovieID, ActorID), and EXISTS does not duplicate movie rows. The test ActorID 1 is Al Pacino in the team's supplied data."
+  },
+  {
+    "id": "R19",
+    "title": "Available movies starring all selected actors",
+    "role": "Customer",
+    "definition": "Find available movies featuring both selected actor IDs.",
+    "parameters": [
+      {
+        "name": "ActorID1",
+        "type": "INTEGER",
+        "description": "First selected actor's primary key."
+      },
+      {
+        "name": "ActorID2",
+        "type": "INTEGER",
+        "description": "Second selected actor's primary key."
+      }
+    ],
+    "sql": "SELECT v.MovieID, v.MovieName, v.MovieType, v.Rating, v.AvailableCopies\nFROM V_MOVIE_AVAILABILITY v\nWHERE v.AvailableCopies > 0\n  AND EXISTS (\n      SELECT 1\n      FROM FEATURES f1\n      WHERE f1.MovieID = v.MovieID AND f1.ActorID = ?\n  )\n  AND EXISTS (\n      SELECT 1\n      FROM FEATURES f2\n      WHERE f2.MovieID = v.MovieID AND f2.ActorID = ?\n  )\nORDER BY v.MovieName, v.MovieID;",
+    "values": [
+      1,
+      2
+    ],
+    "notes": "The actor-group semantics are ALL. Separate EXISTS predicates also handle duplicate actor selections correctly: selecting the same actor twice is equivalent to selecting that actor once. Additional selected actor IDs use additional bound EXISTS predicates. The team's data associates actor 1 Al Pacino and actor 2 Tim Robbins with movie 1; this preserves the supplied fictional/demo cast assignments."
+  },
+  {
+    "id": "R20",
+    "title": "Employee information visible to customer representatives",
+    "role": "CustomerRepresentative",
+    "definition": "List employee identification, contact, start-date, and role information while excluding hourly pay.",
+    "parameters": [],
+    "sql": "SELECT e.SocialSecurityNumber, e.PersonID,\n       p.FirstName, p.LastName, p.Address, p.City, p.State,\n       p.ZipCode, p.Telephone, e.StartDate, e.EmployeeType\nFROM EMPLOYEE e\nJOIN PERSON p ON p.PersonID = e.PersonID\nORDER BY p.LastName, p.FirstName, e.SocialSecurityNumber;",
+    "values": [],
+    "notes": "HourlyRate is intentionally absent, as required by the project. Authorize the customer-representative role server-side; customers must not receive employee information. This safe projection is not a substitute for controlled database/API access to the EMPLOYEE base table."
+  },
+  {
+    "id": "P01",
+    "title": "Record a rental / customer places an order",
+    "role": "Representative; customer through authorized application",
+    "definition": "Create one rental and all three mandatory associations atomically, while enforcing copies, plan limits, representative role, ownership, and queue removal.",
+    "parameters": [
+      {
+        "name": "OrderID",
+        "type": "INTEGER",
+        "description": "Unused new rental ID."
+      },
+      {
+        "name": "AccountNumber",
+        "type": "INTEGER",
+        "description": "Account being accessed."
+      },
+      {
+        "name": "AuthenticatedCustomerID",
+        "type": "CHAR(11)",
+        "description": "Trusted customer identity from the application session, not a user-editable form field."
+      },
+      {
+        "name": "MovieID",
+        "type": "INTEGER",
+        "description": "Requested movie."
+      },
+      {
+        "name": "RepresentativeSSN",
+        "type": "CHAR(11)",
+        "description": "Existing customer representative."
+      },
+      {
+        "name": "RentalDateTime",
+        "type": "DATETIME",
+        "description": "Rental time; tests use fixed demo-era dates."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "CALL rent_movie(?, ?, ?, ?, ?, ?);",
+        "values": [
+          5,
+          1,
+          "444-44-4444",
+          1,
+          "123-45-6789",
+          "2009-11-22 10:00:00"
+        ]
+      },
+      {
+        "sql": "SELECT o.OrderID, p.AccountNumber, om.MovieID, h.SocialSecurityNumber, o.OrderDateTime, o.ReturnDateTime FROM ORDERR o JOIN PLACES p USING (OrderID) JOIN ORDER_MOVIE om USING (OrderID) JOIN HANDLEDBY h USING (OrderID) WHERE o.OrderID = ?;",
+        "values": [
+          5
+        ]
+      },
+      {
+        "sql": "SELECT * FROM QUEUES WHERE AccountNumber = ? ORDER BY QueuePosition;",
+        "values": [
+          1
+        ]
+      }
+    ],
+    "notes": "Full SQL is rent_movie in 02_transaction_procedures.sql. READ COMMITTED plus account/movie row locks serialize cooperating rental writers. All application rental writes must use this path; raw direct table writes bypass it. A duplicate OrderID fails and rolls back. Calendar months determine the limited-plan quota."
+  },
+  {
+    "id": "P02",
+    "title": "Return a movie and offer the next available queued movie",
+    "role": "Customer through authorized application",
+    "definition": "Mark the current rental returned and attempt one next-available queue fulfillment in the same transaction. A quota/full account or no available queue item leaves fulfillment waiting.",
+    "parameters": [
+      {
+        "name": "ReturnedOrderID",
+        "type": "INTEGER",
+        "description": "Current rental being returned."
+      },
+      {
+        "name": "AccountNumber",
+        "type": "INTEGER",
+        "description": "Account being accessed."
+      },
+      {
+        "name": "AuthenticatedCustomerID",
+        "type": "CHAR(11)",
+        "description": "Trusted customer identity from the application session, not a user-editable form field."
+      },
+      {
+        "name": "ReturnDateTime",
+        "type": "DATETIME",
+        "description": "Time of return."
+      },
+      {
+        "name": "NewOrderID",
+        "type": "INTEGER",
+        "description": "Unused ID for possible next rental."
+      },
+      {
+        "name": "RepresentativeSSN",
+        "type": "CHAR(11)",
+        "description": "Representative for the replacement rental."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "CALL return_movie(?, ?, ?, ?);",
+        "values": [
+          3,
+          1,
+          "444-44-4444",
+          "2009-11-22 10:00:00"
+        ]
+      },
+      {
+        "sql": "CALL fulfill_next(?, ?, ?, ?, ?);",
+        "values": [
+          5,
+          1,
+          "444-44-4444",
+          "123-45-6789",
+          "2009-11-22 10:00:00"
+        ]
+      },
+      {
+        "sql": "SELECT * FROM ORDERR WHERE OrderID IN (3, 5) ORDER BY OrderID;",
+        "values": []
+      },
+      {
+        "sql": "SELECT o.OrderID, p.AccountNumber, om.MovieID, h.SocialSecurityNumber, o.OrderDateTime, o.ReturnDateTime FROM ORDERR o JOIN PLACES p USING (OrderID) JOIN ORDER_MOVIE om USING (OrderID) JOIN HANDLEDBY h USING (OrderID) WHERE o.OrderID = ?;",
+        "values": [
+          5
+        ]
+      },
+      {
+        "sql": "SELECT * FROM QUEUES WHERE AccountNumber = 1 ORDER BY QueuePosition;",
+        "values": []
+      }
+    ],
+    "notes": "The original order and its customer/movie/representative links remain intact. If fulfillment raises an actual SQL error, both steps roll back. A routine waiting result is not an error and the return can commit. Deadlock/lock-timeout errors require the application to retry the entire transaction."
+  },
+  {
+    "id": "P03",
+    "title": "Add a movie to the queue",
+    "role": "Customer",
+    "definition": "Append a movie once at the end of the account queue.",
+    "parameters": [
+      {
+        "name": "AccountNumber",
+        "type": "INTEGER",
+        "description": "Account being accessed."
+      },
+      {
+        "name": "AuthenticatedCustomerID",
+        "type": "CHAR(11)",
+        "description": "Trusted customer identity from the application session, not a user-editable form field."
+      },
+      {
+        "name": "MovieID",
+        "type": "INTEGER",
+        "description": "Existing movie to append."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "CALL queue_add(?, ?, ?);",
+        "values": [
+          1,
+          "444-44-4444",
+          2
+        ]
+      },
+      {
+        "sql": "SELECT * FROM QUEUES WHERE AccountNumber = ? ORDER BY QueuePosition;",
+        "values": [
+          1
+        ]
+      }
+    ],
+    "notes": "Queue policy: each account queues each title at most once; positions remain consecutive through the supplied queue operations. Unavailable movies may be queued."
+  },
+  {
+    "id": "P04",
+    "title": "Remove a queued movie",
+    "role": "Customer",
+    "definition": "Remove one position and close the gap.",
+    "parameters": [
+      {
+        "name": "AccountNumber",
+        "type": "INTEGER",
+        "description": "Account being accessed."
+      },
+      {
+        "name": "AuthenticatedCustomerID",
+        "type": "CHAR(11)",
+        "description": "Trusted customer identity from the application session, not a user-editable form field."
+      },
+      {
+        "name": "QueuePosition",
+        "type": "INTEGER",
+        "description": "Existing position to remove."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "CALL queue_remove(?, ?, ?);",
+        "values": [
+          1,
+          "444-44-4444",
+          1
+        ]
+      },
+      {
+        "sql": "SELECT * FROM QUEUES WHERE AccountNumber = ? ORDER BY QueuePosition;",
+        "values": [
+          1
+        ]
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "P05",
+    "title": "Reorder the movie queue",
+    "role": "Customer",
+    "definition": "Move a queued movie to another position and shift the intervening entries.",
+    "parameters": [
+      {
+        "name": "AccountNumber",
+        "type": "INTEGER",
+        "description": "Account being accessed."
+      },
+      {
+        "name": "AuthenticatedCustomerID",
+        "type": "CHAR(11)",
+        "description": "Trusted customer identity from the application session, not a user-editable form field."
+      },
+      {
+        "name": "OldPosition",
+        "type": "INTEGER",
+        "description": "Current position."
+      },
+      {
+        "name": "NewPosition",
+        "type": "INTEGER",
+        "description": "Desired position."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "CALL queue_move(?, ?, ?, ?);",
+        "values": [
+          1,
+          "444-44-4444",
+          2,
+          1
+        ]
+      },
+      {
+        "sql": "SELECT * FROM QUEUES WHERE AccountNumber = ? ORDER BY QueuePosition;",
+        "values": [
+          1
+        ]
+      }
+    ],
+    "notes": "Uses a temporary positive position and ordered updates to avoid transient duplicate primary keys."
+  },
+  {
+    "id": "P06",
+    "title": "Rate a previously rented movie",
+    "role": "Customer",
+    "definition": "Insert a rating or replace the account's existing rating after checking rental history and ownership.",
+    "parameters": [
+      {
+        "name": "AccountNumber",
+        "type": "INTEGER",
+        "description": "Account being accessed."
+      },
+      {
+        "name": "AuthenticatedCustomerID",
+        "type": "CHAR(11)",
+        "description": "Trusted customer identity from the application session, not a user-editable form field."
+      },
+      {
+        "name": "MovieID",
+        "type": "INTEGER",
+        "description": "Previously rented movie."
+      },
+      {
+        "name": "Rating",
+        "type": "INTEGER",
+        "description": "1 through 5."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "CALL rate_movie(?, ?, ?, ?);",
+        "values": [
+          1,
+          "444-44-4444",
+          1,
+          5
+        ]
+      },
+      {
+        "sql": "SELECT * FROM RATES WHERE AccountNumber = ? AND MovieID = ?;",
+        "values": [
+          1,
+          1
+        ]
+      }
+    ],
+    "notes": "RATES stores the individual customer rating. MOVIE.Rating remains the supplied catalog popularity score; it is not silently overwritten with the first user rating."
+  },
+  {
+    "id": "P07",
+    "title": "Update an existing movie rating",
+    "role": "Customer",
+    "definition": "Change an existing account/movie rating without inserting a duplicate key.",
+    "parameters": [
+      {
+        "name": "AccountNumber",
+        "type": "INTEGER",
+        "description": "Account being accessed."
+      },
+      {
+        "name": "AuthenticatedCustomerID",
+        "type": "CHAR(11)",
+        "description": "Trusted customer identity from the application session, not a user-editable form field."
+      },
+      {
+        "name": "MovieID",
+        "type": "INTEGER",
+        "description": "Previously rented movie."
+      },
+      {
+        "name": "Rating",
+        "type": "INTEGER",
+        "description": "Replacement rating."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "CALL rate_movie(?, ?, ?, ?);",
+        "values": [
+          1,
+          "444-44-4444",
+          1,
+          4
+        ]
+      },
+      {
+        "sql": "SELECT * FROM RATES WHERE AccountNumber = ? AND MovieID = ?;",
+        "values": [
+          1,
+          1
+        ]
+      }
+    ],
+    "notes": "",
+    "setup": [
+      {
+        "sql": "CALL rate_movie(?, ?, ?, ?);",
+        "values": [
+          1,
+          "444-44-4444",
+          1,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "id": "P08",
+    "title": "Delete an unreferenced customer",
+    "role": "Customer representative",
+    "definition": "Delete a customer with no rental history, and delete the person only if they are not also an employee.",
+    "parameters": [
+      {
+        "name": "CustomerID",
+        "type": "CHAR(11)",
+        "description": "Existing customer with no protected rental history."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "CALL delete_customer(?);",
+        "values": [
+          "111-11-1111"
+        ]
+      },
+      {
+        "sql": "SELECT * FROM CUSTOMER WHERE CustomerID = ?;",
+        "values": [
+          "111-11-1111"
+        ]
+      },
+      {
+        "sql": "SELECT * FROM PERSON WHERE PersonID = ?;",
+        "values": [
+          1
+        ]
+      }
+    ],
+    "notes": "Deletion of a customer with rental history is rejected by the preserved foreign keys. This prevents orphaned past/current orders. Deactivation and historical subscription accounting would require a separate agreed schema extension."
+  },
+  {
+    "id": "P09",
+    "title": "Delete an unreferenced employee",
+    "role": "Manager",
+    "definition": "Delete an employee with no handled rentals; retain PERSON if also a customer.",
+    "parameters": [
+      {
+        "name": "EmployeeSSN",
+        "type": "CHAR(11)",
+        "description": "Existing employee without rental references."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "CALL delete_employee(?);",
+        "values": [
+          "789-12-3456"
+        ]
+      },
+      {
+        "sql": "SELECT * FROM EMPLOYEE WHERE SocialSecurityNumber = ?;",
+        "values": [
+          "789-12-3456"
+        ]
+      },
+      {
+        "sql": "SELECT * FROM PERSON WHERE PersonID = ?;",
+        "values": [
+          6
+        ]
+      }
+    ],
+    "notes": "The demo manager has no handled rentals. Production must separately prevent removal of the last login-capable manager; no login lifecycle is modeled in this schema."
+  },
+  {
+    "id": "P10",
+    "title": "Edit movie information without invalidating circulation",
+    "role": "Manager",
+    "definition": "Update movie metadata and reject an inventory count below outstanding rentals.",
+    "parameters": [
+      {
+        "name": "MovieID",
+        "type": "INTEGER",
+        "description": "Existing movie."
+      },
+      {
+        "name": "MovieName",
+        "type": "CHAR(100)",
+        "description": "Updated title."
+      },
+      {
+        "name": "MovieType",
+        "type": "CHAR(10)",
+        "description": "Comedy, Drama, Action or Foreign."
+      },
+      {
+        "name": "DistributionFee",
+        "type": "DECIMAL(10,2)",
+        "description": "Nonnegative fee."
+      },
+      {
+        "name": "NumberOfCopies",
+        "type": "INTEGER",
+        "description": "At least the outstanding rental count."
+      },
+      {
+        "name": "Rating",
+        "type": "INTEGER",
+        "description": "Catalog rating from 1 through 5."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "CALL edit_movie(?, ?, ?, ?, ?, ?);",
+        "values": [
+          1,
+          "The Godfather Updated",
+          "Drama",
+          12000,
+          5,
+          4
+        ]
+      },
+      {
+        "sql": "SELECT * FROM MOVIE WHERE MovieID = ?;",
+        "values": [
+          1
+        ]
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "P11",
+    "title": "Enroll an existing customer in a rental plan",
+    "role": "Customer representative",
+    "definition": "Open an account for an existing customer.",
+    "parameters": [
+      {
+        "name": "AccountNumber",
+        "type": "INTEGER",
+        "description": "Unused account number."
+      },
+      {
+        "name": "CustomerID",
+        "type": "CHAR(11)",
+        "description": "Existing customer."
+      },
+      {
+        "name": "AccountType",
+        "type": "CHAR(11)",
+        "description": "Lim, Unlim1, Unlim2 or Unlim3."
+      },
+      {
+        "name": "CreationDate",
+        "type": "DATE",
+        "description": "Account opening date."
+      }
+    ],
+    "statements": [
+      {
+        "sql": "INSERT INTO ACCOUNT (AccountNumber, CustomerID, AccountType, AccountCreationDate) VALUES (?, ?, ?, ?);",
+        "values": [
+          3,
+          "111-11-1111",
+          "Unlim1",
+          "2009-11-22"
+        ]
+      },
+      {
+        "sql": "SELECT * FROM ACCOUNT WHERE AccountNumber = ?;",
+        "values": [
+          3
+        ]
+      }
+    ],
+    "notes": "Fees are determined by plan: Lim=10, Unlim1=15, Unlim2=20, Unlim3=25 dollars per month."
+  },
+  {
+    "id": "N01",
+    "title": "Reject renting an unavailable movie",
+    "role": "Validation",
+    "definition": "Reject renting an unavailable movie",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL rent_movie(?, ?, ?, ?, ?, ?);",
+        "values": [
+          5,
+          1,
+          "444-44-4444",
+          3,
+          "123-45-6789",
+          "2009-11-22 10:00:00"
+        ]
+      }
+    ],
+    "notes": "This test must be rejected; it is not a normal successful transaction.",
+    "expected_error": "No copy"
+  },
+  {
+    "id": "N02",
+    "title": "Reject exceeding concurrent plan limit",
+    "role": "Validation",
+    "definition": "Reject exceeding concurrent plan limit",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL rent_movie(?, ?, ?, ?, ?, ?);",
+        "values": [
+          5,
+          2,
+          "222-22-2222",
+          1,
+          "123-45-6789",
+          "2009-11-22 10:00:00"
+        ]
+      }
+    ],
+    "notes": "This test must be rejected; it is not a normal successful transaction.",
+    "expected_error": "Concurrent rental limit"
+  },
+  {
+    "id": "N03",
+    "title": "Reject third limited-plan rental in one calendar month",
+    "role": "Validation",
+    "definition": "Reject third limited-plan rental in one calendar month",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL rent_movie(?, ?, ?, ?, ?, ?);",
+        "values": [
+          5,
+          2,
+          "222-22-2222",
+          1,
+          "123-45-6789",
+          "2009-11-22 10:00:00"
+        ]
+      }
+    ],
+    "notes": "This test must be rejected; it is not a normal successful transaction.",
+    "setup": [
+      {
+        "sql": "CALL return_movie(?, ?, ?, ?);",
+        "values": [
+          4,
+          2,
+          "222-22-2222",
+          "2009-11-22 09:00:00"
+        ]
+      }
+    ],
+    "expected_error": "monthly quota"
+  },
+  {
+    "id": "N04",
+    "title": "Reject a manager as the rental representative",
+    "role": "Validation",
+    "definition": "Reject a manager as the rental representative",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL rent_movie(?, ?, ?, ?, ?, ?);",
+        "values": [
+          5,
+          1,
+          "444-44-4444",
+          1,
+          "789-12-3456",
+          "2009-11-22 10:00:00"
+        ]
+      }
+    ],
+    "notes": "This test must be rejected; it is not a normal successful transaction.",
+    "expected_error": "customer representative"
+  },
+  {
+    "id": "N05",
+    "title": "Reject access to another customer account",
+    "role": "Validation",
+    "definition": "Reject access to another customer account",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL queue_add(?, ?, ?);",
+        "values": [
+          2,
+          "444-44-4444",
+          1
+        ]
+      }
+    ],
+    "notes": "This test must be rejected; it is not a normal successful transaction.",
+    "expected_error": "not owned"
+  },
+  {
+    "id": "N06",
+    "title": "Reject rating a never-rented movie",
+    "role": "Validation",
+    "definition": "Reject rating a never-rented movie",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL rate_movie(?, ?, ?, ?);",
+        "values": [
+          1,
+          "444-44-4444",
+          2,
+          5
+        ]
+      }
+    ],
+    "notes": "This test must be rejected; it is not a normal successful transaction.",
+    "expected_error": "Only a movie rented"
+  },
+  {
+    "id": "N07",
+    "title": "Reject invalid movie rating",
+    "role": "Validation",
+    "definition": "Reject invalid movie rating",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL rate_movie(?, ?, ?, ?);",
+        "values": [
+          1,
+          "444-44-4444",
+          1,
+          6
+        ]
+      }
+    ],
+    "notes": "This test must be rejected; it is not a normal successful transaction.",
+    "expected_error": "Rating must"
+  },
+  {
+    "id": "N08",
+    "title": "Reject deletion of customer with rental history",
+    "role": "Validation",
+    "definition": "Reject deletion of customer with rental history",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL delete_customer(?);",
+        "values": [
+          "444-44-4444"
+        ]
+      }
+    ],
+    "notes": "This test must be rejected; it is not a normal successful transaction.",
+    "expected_error": "foreign key constraint fails"
+  },
+  {
+    "id": "N09",
+    "title": "Reject deletion of representative with rental history",
+    "role": "Validation",
+    "definition": "Reject deletion of representative with rental history",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL delete_employee(?);",
+        "values": [
+          "123-45-6789"
+        ]
+      }
+    ],
+    "notes": "This test must be rejected; it is not a normal successful transaction.",
+    "expected_error": "foreign key constraint fails"
+  },
+  {
+    "id": "N10",
+    "title": "Reject lowering copies below outstanding rentals",
+    "role": "Validation",
+    "definition": "Reject lowering copies below outstanding rentals",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL edit_movie(?, ?, ?, ?, ?, ?);",
+        "values": [
+          3,
+          "Borat",
+          "Comedy",
+          500,
+          0,
+          3
+        ]
+      }
+    ],
+    "notes": "This test must be rejected; it is not a normal successful transaction.",
+    "expected_error": "Copies cannot"
+  },
+  {
+    "id": "N11",
+    "title": "Reject duplicate queue title",
+    "role": "Validation",
+    "definition": "Reject duplicate queue title",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL queue_add(?, ?, ?);",
+        "values": [
+          1,
+          "444-44-4444",
+          1
+        ]
+      }
+    ],
+    "notes": "This test must be rejected; it is not a normal successful transaction.",
+    "expected_error": "already queued"
+  },
+  {
+    "id": "N12",
+    "title": "Reject return before rental date",
+    "role": "Validation",
+    "definition": "Reject return before rental date",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL return_movie(?, ?, ?, ?);",
+        "values": [
+          3,
+          1,
+          "444-44-4444",
+          "2009-11-01 10:00:00"
+        ]
+      }
+    ],
+    "notes": "This test must be rejected; it is not a normal successful transaction.",
+    "expected_error": "Return date"
+  },
+  {
+    "id": "N13",
+    "title": "Reject duplicate order ID and roll back associations",
+    "role": "Validation",
+    "definition": "Reject duplicate order ID and roll back associations",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL rent_movie(?, ?, ?, ?, ?, ?);",
+        "values": [
+          1,
+          1,
+          "444-44-4444",
+          1,
+          "123-45-6789",
+          "2009-11-22 10:00:00"
+        ]
+      }
+    ],
+    "notes": "This test must be rejected; it is not a normal successful transaction.",
+    "expected_error": "Duplicate entry"
+  },
+  {
+    "id": "E01",
+    "title": "Return succeeds when monthly quota prevents the next rental",
+    "role": "Validation",
+    "definition": "A limited-plan account can return a movie even when it has exhausted the month's quota.",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL return_movie(?, ?, ?, ?);",
+        "values": [
+          4,
+          2,
+          "222-22-2222",
+          "2009-11-22 10:00:00"
+        ]
+      },
+      {
+        "sql": "CALL fulfill_next(?, ?, ?, ?, ?);",
+        "values": [
+          5,
+          2,
+          "222-22-2222",
+          "123-45-6789",
+          "2009-11-22 10:00:00"
+        ]
+      },
+      {
+        "sql": "SELECT OrderID, ReturnDateTime FROM ORDERR WHERE OrderID = 4;",
+        "values": []
+      },
+      {
+        "sql": "SELECT COUNT(*) AS NewOrderCount FROM ORDERR WHERE OrderID = 5;",
+        "values": []
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "E02",
+    "title": "Next available movie skips an unavailable first queue item",
+    "role": "Validation",
+    "definition": "An unavailable title at the head of the queue does not block an available later title.",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL fulfill_next(?, ?, ?, ?, ?);",
+        "values": [
+          5,
+          1,
+          "444-44-4444",
+          "123-45-6789",
+          "2009-11-22 10:00:00"
+        ]
+      },
+      {
+        "sql": "SELECT o.OrderID, p.AccountNumber, om.MovieID, h.SocialSecurityNumber, o.OrderDateTime, o.ReturnDateTime FROM ORDERR o JOIN PLACES p USING (OrderID) JOIN ORDER_MOVIE om USING (OrderID) JOIN HANDLEDBY h USING (OrderID) WHERE o.OrderID = ?;",
+        "values": [
+          5
+        ]
+      },
+      {
+        "sql": "SELECT * FROM QUEUES WHERE AccountNumber = 1 ORDER BY QueuePosition;",
+        "values": []
+      }
+    ],
+    "notes": "",
+    "setup": [
+      {
+        "sql": "CALL queue_move(?, ?, ?, ?);",
+        "values": [
+          1,
+          "444-44-4444",
+          2,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "E03",
+    "title": "Limited-plan quota resets in the next calendar month",
+    "role": "Validation",
+    "definition": "After returning its outstanding movie, a limited account can rent in the next calendar month.",
+    "parameters": [],
+    "statements": [
+      {
+        "sql": "CALL rent_movie(?, ?, ?, ?, ?, ?);",
+        "values": [
+          5,
+          2,
+          "222-22-2222",
+          1,
+          "123-45-6789",
+          "2009-12-01 10:00:00"
+        ]
+      },
+      {
+        "sql": "SELECT o.OrderID, p.AccountNumber, om.MovieID, h.SocialSecurityNumber, o.OrderDateTime, o.ReturnDateTime FROM ORDERR o JOIN PLACES p USING (OrderID) JOIN ORDER_MOVIE om USING (OrderID) JOIN HANDLEDBY h USING (OrderID) WHERE o.OrderID = ?;",
+        "values": [
+          5
+        ]
+      }
+    ],
+    "notes": "",
+    "setup": [
+      {
+        "sql": "CALL return_movie(?, ?, ?, ?);",
+        "values": [
+          4,
+          2,
+          "222-22-2222",
+          "2009-11-22 10:00:00"
+        ]
+      }
+    ]
+  }
+]

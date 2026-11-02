@@ -1,0 +1,76 @@
+DEMO DATA AND DESIGN DECISIONS
+
+1. The original team tables and columns are retained. PERSON and EmployeeType
+   already correct the two modeling deductions from Project 1. The comma after
+   PRIMARY KEY (OrderID) is also present in the revised schema.
+
+2. Two nullable foreign keys were tightened: CUSTOMER.PersonID and QUEUES.MovieID
+   are NOT NULL. Each customer must have a person record, and every queue entry
+   must name a movie. The redundant UNIQUE(AccountNumber, QueuePosition) was
+   replaced with UNIQUE(AccountNumber, MovieID), adopting a no-duplicate-title
+   queue policy. Queue positions are maintained as consecutive positive integers.
+
+3. Official demo source:
+   https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/demo_data.html
+   The official data omits the representatives who handled orders 1-4. For this
+   test fixture, all four are assigned to David Smith, the only listed customer
+   representative. This is an added assumption, not a fact supplied by the demo.
+   The queue order follows the order in which movies appear in the demo account
+   table. Initial RATES is empty because individual user ratings are not supplied.
+
+4. The demo gives dates, rather than complete return timestamps. Order 1 uses
+   midnight on its stated return date. Order 2 uses its rental timestamp as the
+   return timestamp, keeping it on the stated return date and avoiding a return
+   before rental. These are timestamp assumptions already used by the team draft.
+   Historical dates remain in 2005, 2006 and 2009; they are not moved to 2026.
+
+5. Monthly subscription income uses the assignment's fixed prices: Lim $10,
+   Unlim1 $15, Unlim2 $20 and Unlim3 $25. The supplied schema records no account
+   cancellation, historical plan changes, invoices or payments. The report is
+   therefore labeled an estimate assuming every retained account stays active
+   after creation, its current plan also applied in the requested month, and a
+   full fee applies without proration. Exact historical accounting requires a
+   schema extension and corresponding historical data. No such history is invented.
+
+6. Rentals use calendar months for the limited plan's two-rental monthly quota.
+   Every successful rental counts, including one returned on the same day. Open
+   rentals determine simultaneous-use limits and copy availability. The account
+   cannot rent a second concurrent copy of a movie it already holds. Returning a
+   movie preserves its order and all links and offers the next eligible, available
+   queued title. Unavailable titles are skipped; if none is eligible, it waits.
+
+7. Deletion is allowed for unreferenced customer, employee and movie records.
+   Historical rental references prevent deletion. This avoids destroying history
+   or leaving an unreturned movie disconnected from its customer. A PERSON row
+   is kept if the person still has another customer/employee subtype.
+
+8. Recommendations use distinct previously rented titles as customer history.
+   Similarity is the number of shared titles. All customers tied for the highest
+   positive overlap are nearest neighbors. Their unseen titles are ranked by the
+   number of recommending neighbors, then MovieID. The same query serves customer
+   representatives and customers. A new customer without overlapping history gets
+   an empty recommendation list; best sellers remain a separate list.
+
+9. Individual movie ratings are in RATES. A customer can rate only a movie rented
+   through that account; a new rating for the same pair replaces the old rating.
+   MOVIE.Rating and CUSTOMER.Rating retain the supplied popularity/activity scores;
+   the specification gives no formula to recompute those scores automatically.
+
+10. Reports for rental activity and best sellers are all-time. Tied leaders are
+    included. Multi-keyword and multi-actor searches mean ALL supplied values.
+    Actor IDs identify actors because actor names need not be unique.
+
+11. Procedures require an explicit READ COMMITTED transaction. Successful
+    application operations COMMIT; any error ROLLBACKs. Tests ROLLBACK successful
+    mutations as well, preserving the initial fixture. All rentals, returns,
+    inventory edits and queue writes must use the documented transaction paths.
+    On MySQL deadlock error 1213 or lock timeout 1205, retry the entire operation
+    with a bounded retry policy; never continue a partially failed transaction.
+
+12. Assignment 2 documents the DML used by each role. Login authentication and
+    application authorization are not implemented by adding an EmployeeType CHECK.
+    The JDBC application must authorize manager/representative operations and bind
+    customer identity from the authenticated session, not from a user-editable
+    customer-ID field. Customer queries check account ownership; the representative
+    employee query omits HourlyRate. Do not give customers direct table access.
+    The test runner's database credentials are for testing, not customer logins.

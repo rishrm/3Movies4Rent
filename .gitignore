@@ -1,0 +1,32 @@
+# Local credentials and team details
+.env
+.env.*
+!.env.example
+team.local.json
+*.pem
+*.key
+.my.cnf
+
+# Local runtime and generated execution evidence
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+execution_results/
+runtime/
+mysql-data/
+*.log
+
+# Submitted documents, grading feedback and local screenshots
+private/
+submissions/
+*.pdf
+*.docx
+*.png
+*.jpg
+*.jpeg
+*.zip
+.DS_Store
+.idea/
+.vscode/
