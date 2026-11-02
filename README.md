@@ -20,11 +20,11 @@ or the later application's login and authorization behavior.
 1. Clone this repo, or choose **Code → Download ZIP** on GitHub.
 2. Read [the setup guide](docs/RUNNING_THE_PROJECT.md).
 3. Run the SQL against a **new test database** on MySQL 8.0.16 or newer.
-4. Review the generated execution report and fix any failing cases before using it
-   in the submission document.
+4. Review the generated execution report and fix any failing cases before merging
+   your changes.
 
-The Python runner is an optional testing helper. The project application still
-uses the required Java/JDBC stack in the later assignment.
+The Python runner is an optional testing helper for the MySQL database layer.
+The application uses Java/JDBC to connect to the database.
 
 ```bash
 git clone https://github.com/rishrm/3Movies4Rent.git
@@ -93,13 +93,12 @@ access. GitHub's web editor is also available for small edits.
 
 Copy `team.example.json` to `team.local.json` and fill in the team names and email
 addresses locally. That file and generated execution reports are ignored by Git.
-The public repository contains no submitted PDFs, grading screenshots or team
-contact list. Demo customer records in the SQL come from the public course
+The public repository contains no private documents or team contact list.
+Demo customer records in the SQL come from the public course
 fixture and are test data.
 
 ## Course references
 
 - [Course homepage](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/)
 - [Project requirements](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/main.html)
-- [Assignment 2 handout](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/hw2.html)
 - [Official demo data](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/demo_data.html)

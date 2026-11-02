@@ -64,12 +64,12 @@ SOURCE 03_test_examples.sql;
 
 In MySQL Workbench, open and execute the same three files in that order on the same connection. The third file contains literal examples with rollback; it does not perform the runner's full assertion and expected-rejection checks.
 
-Use the parameterized statements in `transactions.json` or `TRANSACTION_CATALOG.txt` as the implementation reference. Bare `?` placeholders need JDBC binding or a prepared statement; they are not directly executable as ordinary queries in a SQL editor.
+Use the parameterized statements in `database/transactions.json` as the implementation reference. Bare `?` placeholders need JDBC binding or a prepared statement; they are not directly executable as ordinary queries in a SQL editor.
 
 ## Before sharing results
 
-- Keep credentials, local team details, real customer data, and private submission material out of the public repository.
-- Keep any local `team.json` private. Add the required identifying details to the private course submission.
+- Keep credentials, local team details, real customer data, and private documents out of the public repository.
+- Copy `team.example.json` to the ignored `team.local.json` file when a local report needs team details.
 - After later code changes, inspect the latest GitHub Actions run and its captured results. An earlier passing run establishes results only for the revision it tested.
 - A passing isolated test suite does not establish simultaneous-session behavior or application authorization. Those remain separate integration checks.
 

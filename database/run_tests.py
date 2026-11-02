@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the team's Assignment 2 tests in a NEW disposable MySQL database.
+"""Run the movie rental database tests in a NEW disposable MySQL database.
 
 Requires Python 3 and PyMySQL. Passwords are prompted, never saved.
 The existing team database is not used, overwritten, or dropped.
@@ -126,7 +126,7 @@ def main():
     ap.add_argument('--database',default='3Movies4Rent_A2_Test_'+dt.datetime.now().strftime('%Y%m%d_%H%M%S'))
     ap.add_argument('--output-dir',default=str(HERE/'execution_results'))
     ap.add_argument('--team-file',default=str(HERE.parent/'team.local.json'),
-                    help='Optional local-only team metadata for a submission report.')
+                    help='Optional local-only team metadata for an execution report.')
     args=ap.parse_args()
     if not re.fullmatch(r'3Movies4Rent_A2_Test(?:_[A-Za-z0-9]+)*',args.database):
         raise SystemExit('Use a NEW database name beginning 3Movies4Rent_A2_Test, followed only by underscores, letters and digits.')
@@ -137,7 +137,7 @@ def main():
         unix_socket=args.socket,autocommit=True,charset='utf8mb4')
     out=Path(args.output_dir);out.mkdir(parents=True,exist_ok=True)
     report=[]
-    report.extend(['CSE 305 - PROJECT ASSIGNMENT 2','3Movies4Rent',''])
+    report.extend(['3Movies4Rent','DATABASE EXECUTION REPORT',''])
     team_path=Path(args.team_file)
     if team_path.exists():
         team=json.loads(team_path.read_text())
@@ -146,7 +146,7 @@ def main():
             report.append(str(member.get('name',''))+' - '+str(member.get('email','')))
         report.append('')
     else:
-        report.extend(['Team details omitted. Add a private team.local.json before generating a submission copy.',''])
+        report.extend(['Team details omitted. Add a private team.local.json to include them in a local report.',''])
     with conn.cursor() as cur:
         cur.execute('SELECT VERSION()');version=cur.fetchone()[0]
         cur.execute('SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME=%s',(args.database,))

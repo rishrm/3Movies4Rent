@@ -1,6 +1,6 @@
-# Review notes
+# Design and testing notes
 
-The SQL package contains corrections based on a review of the assignment requirements and the supplied implementation. The database test step in [GitHub Actions run 41535204328](https://github.com/rishrm/3Movies4Rent/actions/runs/41535204328) executed the revised scripts on **MySQL 8.4.13**. Its captured report records **58/58 cases passed**, all 58 baselines restored, and all 13 intended rejection cases matched. These are actual server results for isolated tests; they do not establish concurrent-session behavior, application authorization, or a particular grading outcome.
+The SQL implements the movie rental project's database requirements. The database test step in [GitHub Actions run 41535204328](https://github.com/rishrm/3Movies4Rent/actions/runs/41535204328) executed the scripts on **MySQL 8.4.13**. Its captured report records **58/58 cases passed**, all 58 baselines restored, and all 13 intended rejection cases matched. These are actual server results for isolated tests; concurrent-session behavior and application authorization need separate integration checks.
 
 ## What the database work covers
 
@@ -31,12 +31,10 @@ Details are in [the database assumptions](../database/ASSUMPTIONS.txt).
 - Check simultaneous rentals, returns, and inventory changes using separate connections.
 - Implement login and role enforcement in the application. Stored customer-ID checks alone do not authenticate a person.
 - Keep screenshots and exported tables readable, including all selected columns. A screenshot of a preceding version is not evidence for changed SQL.
-- Keep assignment documentation complete: the initial demo-data dump/listing and per-transaction definitions, parameters, SQL, sample execution, and relevant notes. The assignment accepts a dump/listing; this repository does not impose an extra screenshot or SELECT-only format.[^assignment]
+- Keep transaction documentation current: describe each operation, its parameters, SQL, sample execution, and relevant assumptions. Retain the fixture and results used to verify each change.
 
 ## Sources and public-repository scope
 
 The repository links to the [project requirements](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/main.html) and [demo-data page](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/demo_data.html) rather than republishing full handouts.
 
-Private source documents, identifying team details, credentials, local reports, and personal feedback are not part of the public code repository. Put any required team identification in the private submission.
-
-[^assignment]: [Project Assignment 2 instructions](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/hw2.html).
+Private documents, team contact details, credentials, and local reports stay outside the public code repository. Use the ignored `team.local.json` file when team details are needed in a local report.

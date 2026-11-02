@@ -18,7 +18,7 @@ runtime/
 mysql-data/
 *.log
 
-# Submitted documents, grading feedback and local screenshots
+# Local documents and screenshots
 private/
 submissions/
 *.pdf

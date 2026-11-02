@@ -582,7 +582,7 @@
     "id": "R01",
     "title": "Monthly subscription income estimate",
     "role": "Manager",
-    "definition": "Estimate subscription income for a selected calendar month using the current account records and the assignment's fixed monthly plan fees.",
+    "definition": "Estimate subscription income for a selected calendar month using the current account records and the project's fixed monthly plan fees.",
     "parameters": [
       {
         "name": "MonthStart",

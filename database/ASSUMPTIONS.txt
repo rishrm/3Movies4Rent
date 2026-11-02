@@ -1,8 +1,8 @@
 DEMO DATA AND DESIGN DECISIONS
 
-1. The original team tables and columns are retained. PERSON and EmployeeType
-   already correct the two modeling deductions from Project 1. The comma after
-   PRIMARY KEY (OrderID) is also present in the revised schema.
+1. PERSON stores shared personal information for customers and employees.
+   EmployeeType distinguishes managers from customer representatives. ACCOUNT
+   stores each customer's subscription and is referenced by rentals and queues.
 
 2. Two nullable foreign keys were tightened: CUSTOMER.PersonID and QUEUES.MovieID
    are NOT NULL. Each customer must have a person record, and every queue entry
@@ -24,7 +24,7 @@ DEMO DATA AND DESIGN DECISIONS
    before rental. These are timestamp assumptions already used by the team draft.
    Historical dates remain in 2005, 2006 and 2009; they are not moved to 2026.
 
-5. Monthly subscription income uses the assignment's fixed prices: Lim $10,
+5. Monthly subscription income uses the project's fixed prices: Lim $10,
    Unlim1 $15, Unlim2 $20 and Unlim3 $25. The supplied schema records no account
    cancellation, historical plan changes, invoices or payments. The report is
    therefore labeled an estimate assuming every retained account stays active
@@ -67,7 +67,7 @@ DEMO DATA AND DESIGN DECISIONS
     On MySQL deadlock error 1213 or lock timeout 1205, retry the entire operation
     with a bounded retry policy; never continue a partially failed transaction.
 
-12. Assignment 2 documents the DML used by each role. Login authentication and
+12. The SQL documents the operations used by each role. Login authentication and
     application authorization are not implemented by adding an EmployeeType CHECK.
     The JDBC application must authorize manager/representative operations and bind
     customer identity from the authenticated session, not from a user-editable
