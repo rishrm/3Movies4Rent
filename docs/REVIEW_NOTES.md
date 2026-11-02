@@ -33,15 +33,10 @@ Details are in [the database assumptions](../database/ASSUMPTIONS.txt).
 - Keep screenshots and exported tables readable, including all selected columns. A screenshot of a preceding version is not evidence for changed SQL.
 - Keep assignment documentation complete: the initial demo-data dump/listing and per-transaction definitions, parameters, SQL, sample execution, and relevant notes. The assignment accepts a dump/listing; this repository does not impose an extra screenshot or SELECT-only format.[^assignment]
 
-## Course deadline discrepancy
-
-At review time, the public project index listed Assignment 2 for **November 2, 2026 at 4:00 p.m.**, while the detailed Assignment 2 page listed **November 2, 2026 at 11:59 p.m.**[^index][^assignment] The repository cannot resolve that discrepancy; use the course's current submission instructions or instructor clarification.
-
 ## Sources and public-repository scope
 
 The repository links to the [project requirements](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/main.html) and [demo-data page](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/demo_data.html) rather than republishing full handouts.
 
 Private source documents, identifying team details, credentials, local reports, and personal feedback are not part of the public code repository. Put any required team identification in the private submission.
 
-[^index]: [Programming project index](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/index.html).
 [^assignment]: [Project Assignment 2 instructions](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/hw2.html).

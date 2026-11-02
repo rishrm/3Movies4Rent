@@ -103,6 +103,3 @@ fixture and are test data.
 - [Project requirements](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/main.html)
 - [Assignment 2 handout](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/hw2.html)
 - [Official demo data](https://www3.cs.stonybrook.edu/~sas/courses/cse305/fall26/project/demo_data.html)
-
-The public project index lists November 2 at 4:00 p.m.; the Assignment 2 handout
-lists November 2 at 11:59 p.m. Confirm the current deadline in Brightspace.
